@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=User Accounts
+Type=Application
+Comment=Create change user accounts for authentification
+Terminal=true
+Exec=basic_auth
+Icon=terminator
+Categories=ConsoleOnly;System;

@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+from jinja2 import Environment, BaseLoader
+import click
+import configparser
+from pathlib import Path
+from shutil import which
+import os
+import stat
+
+# https://specifications.freedesktop.org/menu-spec/latest/apa.html
+CATEGORY_MAP = {
+  'AudioVideo':'Multimedia',
+  'Audio':'Multimedia',
+  'Video':'Multimedia',
+  'Development':'Development',
+  'Education':'Education',
+  'Game':'Games',
+  'Graphics':'Graphics',
+  'Network':'Internet',
+  'Office':'Office',
+  'Science':'Science',
+  'Settings':'Settings',
+  'System':'System',
+  'Utility':'Accessories',
+}
+DE = 'Desktop Entry'
+OB = 'Openbox Entry'
+SV = 'Supervisord Entry'
+CJ = 'Cronjob Entry'
+remove_codes = ['%f','%u','%d','%n','%i','%c','%k','%v','%m'] # https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
+
+def get_desktop_entry(config,path):
+    return {
+      'name':config.get(DE,'Name'),
+      'comment':config.get(DE,'Comment',fallback=''),
+      'terminal':config.getboolean(DE,'Terminal',fallback=False),
+      'exec':' '.join(filter(lambda x: x.lower() not in remove_codes, config.get(DE,'Exec', raw=True).split())).strip(),
+      'tryExec':config.get(DE,'TryExec', raw=True,fallback=None),
+      'path':config.get(DE,'Path', raw=True,fallback=None),
+      'icon':config.get(DE,'Icon',fallback=None),
+      'categories':config.get(DE,'Categories',fallback='').split(';'),
+      'startupnotify':config.getboolean(DE,'StartupNotify',fallback=False),
+      'startupwmclass':config.get(DE,'StartupWMClass',fallback=None),
+      'desktop':os.path.basename(path)
+    }
+
+def get_openbox_entry(config):
+    return {
+      'name':config.get(OB,'Name',fallback=None),
+      'class':config.get(OB,'Class',fallback=None),
+      'groupname':config.get(OB,'GroupName',fallback=None),
+      'groupclass':config.get(OB,'GroupClass',fallback=None),
+      'role':config.get(OB,'Role',fallback=None),
+      'title':config.get(OB,'Title',fallback=None),
+      'type':config.get(OB,'Type',fallback=None),
+      'decor':config.getboolean(OB,'Decor',fallback=True),
+      'shade':config.getboolean(OB,'Shade',fallback=False),
+      'position':{
+          'force':config.getboolean(OB,'PositionForce',fallback=False),
+          'x':config.get(OB,'PositionX',fallback='default'),
+          'y':config.get(OB,'PositionY',fallback='default'),
+          'monitor':config.get(OB,'PositionMonitor',fallback='1'),
+      },
+      'size' : {
+          'width':config.get(OB,'SizeWidth',fallback='default'),
+          'height':config.get(OB,'SizeHeight',fallback='default'),
+      },
+      'focus':config.getboolean(OB,'Focus',fallback=True),
+      'desktop':config.get(OB,'Desktop',fallback='1'),
+      'layer':config.get(OB,'Layer',fallback='normal'),
+      'iconic':config.getboolean(OB,'Iconic',fallback=False),
+      'skip_pager':config.getboolean(OB,'SkipPager',fallback=False),
+      'skip_taskbar':config.getboolean(OB,'SkipTaskbar',fallback=False),
+      'fullscreen':config.getboolean(OB,'FullScreen',fallback=False),
+      'maximized':config.get(OB,'Maximized',fallback='no'),
+      'show_launcher':config.getboolean(OB,'ShowLauncher',fallback=False),
+    }
+
+_pc = -1
+def get_supervisord_entry(config):
+    global _pc
+    _pc += 1
+    return {
+        'name':config.get(SV,'Name', raw=True, fallback='app-{}'.format(_pc)),
+        'command':config.get(SV,'Command', raw=True, fallback=' '.join(filter(lambda x: x.lower() not in remove_codes, config.get(DE,'Exec', raw=True).split())).strip()),
+        'process_name':config.get(SV,'ProcessName', raw=True, fallback=None),
+        'numprocs':config.getint(SV,'NumProcs', fallback=None),
+        'numprocs_start':config.getint(SV,'NumProcsStart', fallback=None),
+        'priority':config.getint(SV,'Priority', fallback=2),
+        'autostart':config.getboolean(SV,'Autostart', fallback=None),
+        'startsecs':config.getint(SV,'StartSecs', fallback=None),
+        'startretries':config.getint(SV,'StartRetries', fallback=None),
+        'autorestart':config.get(SV,'AutoRestart', fallback=None),
+        'exitcodes':config.get(SV,'ExitCodes', fallback=None),
+        'stopsignal':config.get(SV,'StopSignal', fallback=None),
+        'stopwaitsecs':config.get(SV,'StopWaitSecs', fallback=None),
+        'stopasgroup':config.get(SV,'StopAsGroup', fallback=None),
+        'killasgroup':config.get(SV,'KillAsGroup', fallback=None),
+        'user':config.get(SV,'User', fallback='app'),
+        'group':config.get(SV,'Group', fallback='app'),
+        'redirect_stderr':config.getboolean(SV,'RedirectStderr', fallback=True),
+        'stdout_logfile':config.get(SV,'StdOutLogFile', fallback='/dev/fd/1'),
+        'stdout_logfile_maxbytes':config.getint(SV,'StdOutLogFileMaxBytes', fallback=0),
+        'stdout_logfile_backups':config.getint(SV,'StdOutLogFileBackups', fallback=0),
+        'stdout_capture_maxbytes':config.get(SV,'StdOutCaptureMaxBytes', fallback=None),
+        'stdout_events_enabled':config.getboolean(SV,'StdOutEventsEnabled', fallback=None),
+        'stdout_syslog':config.getboolean(SV,'StdOutSysLog', fallback=None),
+        'stderr_logfile':config.get(SV,'StdErrLogFile', fallback=None),
+        'stderr_logfile_maxbytes':config.get(SV,'StdErrLogFileMaxBytes', fallback=None),
+        'stderr_logfile_backups':config.getint(SV,'StdErrLogFileBackupd', fallback=None),
+        'stderr_capture_maxbytes':config.getint(SV,'StdErrCaptureMaxBytes', fallback=None),
+        'stderr_events_enabled':config.getboolean(SV,'StdErrEventsEnabled', fallback=None),
+        'stderr_syslog':config.getboolean(SV,'StdErrSysLog', fallback=None),
+        'environment':config.get(SV,'Environment',raw=True, fallback=None),
+        'directory':config.get(SV,'Directory',raw=True, fallback=None),
+        'umask':config.get(SV,'Umask',raw=True, fallback=None),
+        'serverurl':config.get(SV,'ServerUrl',raw=True, fallback=None),
+    }
+
+def get_cronjob_entry(config):
+    return {
+        'user':config.get(CJ,'User', raw=True),
+        'command':config.get(CJ,'Command', raw=True, fallback=' '.join(filter(lambda x: x.lower() not in remove_codes, config.get(DE,'Exec', raw=True).split())).strip()),
+        'schedule':config.get(CJ,'Schedule', raw=True),
+    }
+
+def desktop_data(desktop_files, check_visibility=True):
+  categorized = dict()
+  items = list()
+  pathlist = Path(desktop_files).glob('**/*.desktop')
+  for path in sorted(pathlist, key=lambda x:str(x).lower()):
+    config = configparser.ConfigParser(strict=False)
+    config.read(path)
+    if config.has_section(DE):
+      visible = (not config.getboolean(DE, 'NoDisplay', fallback=False) or not check_visibility) and not config.getboolean(DE, 'Hidden', fallback=False) and config.get(DE,'Type').lower() == "application"
+      if visible:
+        # https://unix.stackexchange.com/questions/263922/what-is-the-tryexec-field-in-desktop-files
+        tryExec = config.get(DE,'TryExec',fallback=None)
+        if not tryExec is None:
+          fpath = which(tryExec)
+          visible = fpath and os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+        if visible:
+          d = get_desktop_entry(config, path)
+          if config.has_section(OB):
+              d['openbox']=get_openbox_entry(config)
+          if config.has_section(SV):
+              d['supervisord']=get_supervisord_entry(config)
+          if config.has_section(CJ):
+              d['cronjob']=get_cronjob_entry(config)
+          items.append(d)
+          if len(d['categories']) > 0:
+            for category in d['categories']:
+              if category in CATEGORY_MAP:
+                if not CATEGORY_MAP[category] in categorized: categorized[CATEGORY_MAP[category]]=[]
+                categorized[CATEGORY_MAP[category]].append(d)
+  for key in categorized.keys():
+    categorized[key].sort(key=lambda x: x['name'])
+  return (categorized,items)
+
+# jinja filter
+def openbox(input):
+    if type(input) == bool:
+        return 'yes' if input else 'no'
+    return input
+
+# jinja function
+def file_exists(*args):
+    if len(args) == 0:
+        return False
+    path = args[0]
+    for i in range(1,len(args)):
+        path = os.path.join(path,args[i])
+    return os.path.exists(path) and os.path.isfile(path)
+
+def supervisord(conf):
+    retVal = []
+    retVal.append('[program:{}]'.format(conf['name']))
+    for key,value in conf.items():
+        if key == 'name' or value is None: continue
+        if type(value) == bool:
+            value = str(value).lower()
+        retVal.append('{}={}'.format(key,value))
+    return '\n'.join(retVal)
+
+def get_env():
+    env = Environment(loader=BaseLoader)
+    env.filters['openbox']=openbox
+    env.globals['file_exists']=file_exists
+    env.globals['supervisord']=supervisord
+    return env
+
+@click.group()
+def cli():
+  pass
+
+@cli.command('env')
+@click.argument('templates', nargs=-1, type=click.Path(exists=True, resolve_path=True, readable=True, dir_okay=False, file_okay=True))
+def env(templates):
+    for template in templates:
+      with open(template,'r') as file:
+        rtemplate = get_env().from_string(file.read())
+        target_file = template.rstrip('.j2')
+        with open(target_file,'w') as rendered:
+            rendered.write(rtemplate.render(env=os.environ))
+        st = os.stat(template)
+        os.chmod(target_file, st.st_mode)
+        os.chown(target_file, st[stat.ST_UID], st[stat.ST_GID])
+
+@cli.command('desktop')
+@click.option('--visibility/--no-visibility', default=True)
+@click.argument('desktop_files', default='/usr/share/applications', type=click.Path(exists=True, resolve_path=True, readable=True, dir_okay=True, file_okay=False))
+@click.argument('templates', nargs=-1, type=click.Path(exists=True, resolve_path=True, readable=True, dir_okay=False, file_okay=True))
+def desktop(visibility, desktop_files, templates):
+    category_items,items = desktop_data(desktop_files, visibility)
+    for template in templates:
+      with open(template,'r') as file:
+        rtemplate = get_env().from_string(file.read())
+        target_file = template.rstrip('.j2')
+        with open(target_file,'w') as rendered:
+            rendered.write(rtemplate.render(items=items,category_items=category_items,category_names=sorted(category_items.keys(), key=lambda x:x.lower()),env=os.environ))
+        st = os.stat(template)
+        os.chmod(target_file, st.st_mode)
+        os.chown(target_file, st[stat.ST_UID], st[stat.ST_GID])
+
+if __name__ == '__main__':
+    cli()

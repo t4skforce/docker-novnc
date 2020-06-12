@@ -1,0 +1,6 @@
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DISPLAY=:0
+
+{% for item in items %}{% if item.cronjob %}{% if item.comment %}# {{item.comment}}{% endif %}
+{{item.cronjob.schedule}} {{item.cronjob.user}} {{item.cronjob.command}}
+{% endif %}{% endfor %}

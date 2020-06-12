@@ -1,0 +1,2 @@
+{% for key in env.keys() %}{% if key.startswith('ENV_') %}{% set name = key.lstrip('ENV_') %}{{name}}={{env[key]}}; export {{name}}
+{% endif %}{% endfor %}

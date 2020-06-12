@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Feh
+Type=Application
+Comment=Update Wallpaper
+Exec=feh --bg-fill /etc/wallpaper.jpg
+NoDisplay=yes
+
+[Cronjob Entry]
+User=app
+Schedule=* * * * *

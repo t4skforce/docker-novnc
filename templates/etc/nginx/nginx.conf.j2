@@ -1,0 +1,55 @@
+worker_processes  1;
+user  app;
+error_log /dev/stdout info;
+
+events {}
+http {
+  include       mime.types;
+  default_type  application/octet-stream;
+  sendfile        on;
+  keepalive_timeout  65;
+  access_log /dev/stdout;
+  server_tokens off;
+
+  upstream novnc_proxy {
+      server 127.0.0.1:8080;
+  }
+  {% set HTTP_PORT = env.HTTP_PORT  | default(80) %}{% set HTTPS_PORT = env.HTTPS_PORT  | default(443) %}
+  server {
+      listen {{HTTP_PORT}} default_server;
+      server_name {{ env.SERVER_NAME | default('_') }};{% if HTTPS_PORT != 443 %}
+      return 301 https://$host:{{HTTPS_PORT}}$request_uri;{% else %}
+      return 301 https://$host$request_uri;{% endif %}
+  }
+
+  server {
+    listen {{HTTPS_PORT}} ssl default_server;
+    server_name {{ env.SERVER_NAME | default('_') }};
+    ssl_certificate      {{env.HOME}}/.cert/server.crt;
+    ssl_certificate_key  {{env.HOME}}/.cert/server.key;
+    ssl_session_timeout  60m;
+    ssl_prefer_server_ciphers on;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers 'EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA256:EECDH:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA128-SHA:AES128-SHA';
+    add_header Strict-Transport-Security "max-age=15768000";
+
+    {% if file_exists(env.HOME,'.htpasswd') %}
+    auth_basic "Login";
+    auth_basic_user_file {{env.HOME}}/.htpasswd;
+    {% endif %}
+
+    proxy_redirect off;
+    location / {
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_pass http://novnc_proxy/;
+
+      # VNC connection timeout
+      proxy_read_timeout 61s;
+
+      # Disable cache
+      proxy_buffering off;
+    }
+  }
+}

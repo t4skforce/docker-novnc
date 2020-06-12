@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Openbox Configuration Manager
+Type=Application
+Comment=Openbox Configuration Manager
+Exec=obconf
+TryExec=obconf
+Icon=obconf
+Categories=System;
+
+[Openbox Entry]
+Title=Openbox Configuration Manager
+Maximized=yes
+ShowLauncher=yes
