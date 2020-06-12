@@ -57,15 +57,6 @@ stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
 
-[program:tint2]
-priority=2
-user=app
-group=app
-command=/usr/bin/tint2
-autorestart=true
-stdout_logfile=/dev/fd/1
-stdout_logfile_maxbytes=0
-redirect_stderr=true
 {% for item in items %}{% if item.supervisord %}
 {{ supervisord(item.supervisord) }}
 {% endif %}{% endfor %}

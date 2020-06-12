@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Tint2
+Type=Application
+Comment=Lightweight panel
+Exec=tint2
+Icon=tint2
+Categories=System;
+
+[Supervisord Entry]
+Name=tint2
+Priority=2
+Command=/usr/bin/tint2
+AutoRestart=true

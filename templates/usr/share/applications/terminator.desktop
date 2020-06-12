@@ -8,3 +8,6 @@ Type=Application
 Categories=GNOME;GTK;Utility;TerminalEmulator;System;
 StartupNotify=true
 Keywords=terminal;shell;prompt;command;commandline;
+
+[Openbox Entry]
+ShowLauncher=yes
