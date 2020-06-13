@@ -21,6 +21,7 @@ RUN set -xe && \
       tigervnc-standalone-server supervisor cron python3-jinja2 python3-click \
       terminator nano wget curl openssh-client rsync ca-certificates xdg-utils htop tar xzip gzip bzip2 zip unzip fonts-dejavu fonts-liberation2 \
       nginx-light gettext-base apache2-utils && \
+    rm -rf /usr/share/themes/{Arc,Arc-Dark,Arc-Darker}/{cinnamon,gnome-shell,unity,xfwm4} && \
     rm -rf /etc/nginx/nginx.conf && \
     rm -rf /etc/xdg/autostart/* /etc/xdg/openbox/* && \
     rm -rf /var/lib/apt/lists
