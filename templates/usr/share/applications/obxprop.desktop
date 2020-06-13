@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=obxprop
+Type=Application
+Comment=obxprop is a tool for displaying the properties on an x window.
+Terminal=true
+Exec=obxprop-tool
+Icon=terminator
+Categories=ConsoleOnly;System;
