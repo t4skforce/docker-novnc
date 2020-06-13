@@ -15,7 +15,7 @@ ENV HOME=/data \
 
 RUN set -xe && \
     apt-get update -y && \
-    mkdir -p /usr/share/desktop-directories && \
+    mkdir -p /usr/share/desktop-directories /usr/share/man/man1 && \
     apt-get install -y --no-install-recommends \
       openbox obconf tint2 feh papirus-icon-theme arc-theme \
       tigervnc-standalone-server supervisor cron python3-jinja2 python3-click \
