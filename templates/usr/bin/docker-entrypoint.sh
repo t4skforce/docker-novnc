@@ -48,4 +48,6 @@ User gid:    $(id -g app)
 -------------------------------------
 "
 
+export NO_AT_BRIDGE=1
+
 exec supervisord "$@"

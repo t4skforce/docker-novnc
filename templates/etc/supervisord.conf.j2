@@ -10,7 +10,7 @@ environment=HOME=%(ENV_HOME)s,DISPLAY=:0
 priority=0
 user=app
 group=app
-command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -localhost -rfbport 5900 -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
+command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -geometry 1920x1080 -localhost -rfbport 5900 -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
