@@ -5,6 +5,7 @@ Comment=Lightweight panel
 Exec=tint2
 Icon=tint2
 Categories=System;
+NoDisplay=yes
 
 [Supervisord Entry]
 Name=tint2
