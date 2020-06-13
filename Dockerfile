@@ -19,9 +19,11 @@ RUN set -xe && \
     apt-get install -y --no-install-recommends \
       openbox obconf tint2 feh papirus-icon-theme arc-theme \
       tigervnc-standalone-server supervisor cron python3-jinja2 python3-click \
-      terminator nano wget curl openssh-client rsync ca-certificates xdg-utils htop tar xzip gzip bzip2 zip unzip fonts-dejavu fonts-liberation2 \
+      terminator nano wget curl ca-certificates xdg-utils htop tar fonts-dejavu \
       nginx-light gettext-base apache2-utils && \
     rm -rf /usr/share/themes/{Arc,Arc-Dark,Arc-Darker}/{cinnamon,gnome-shell,unity,xfwm4} && \
+    rm -rf /usr/share/icons/{Adwaita,HighContrast,Papirus,Papirus-Light,ePapirus,hicolor} && \
+    rm -rf /usr/lib/python*/**/*.pyc && \
     rm -rf /etc/nginx/nginx.conf && \
     rm -rf /etc/xdg/autostart/* /etc/xdg/openbox/* && \
     rm -rf /var/lib/apt/lists
