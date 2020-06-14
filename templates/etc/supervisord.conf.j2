@@ -1,4 +1,7 @@
+{% set REVERSE_PROXY = env.REVERSE_PROXY | default('yes') -%}
+{% set CRONJOBS = env.CRONJOBS | default('yes') -%}
 [supervisord]
+user=root
 nodaemon=true
 pidfile=/tmp/supervisord.pid
 logfile=/dev/fd/1
@@ -10,7 +13,7 @@ environment=HOME=%(ENV_HOME)s,DISPLAY=:0
 priority=0
 user=app
 group=app
-command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -geometry 1920x1080 -localhost -rfbport 5900 -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
+command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -geometry 1920x1080 -localhost -rfbport {{XTIGERVNC_PORT}} -nolisten unix -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
@@ -20,12 +23,13 @@ redirect_stderr=true
 priority=0
 user=app
 group=app
-command=/usr/local/bin/easy-novnc --addr 127.0.0.1:8080 --host localhost --port 5900 --no-url-password --novnc-params "resize=remote"
+command=/usr/local/bin/easy-novnc --addr {{NOVNC_ADDR}} --host localhost --port {{XTIGERVNC_PORT}} --no-url-password --novnc-params "resize=remote"
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
 
+{% if getboolean(REVERSE_PROXY) -%}
 [program:nginx]
 priority=0
 command=/usr/sbin/nginx -c /etc/nginx/nginx.conf -g "daemon off;"
@@ -38,6 +42,8 @@ stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
 
+{%- endif %}
+{% if getboolean(CRONJOBS) -%}
 [program:cron]
 priority=0
 command=/usr/sbin/cron -f -L 15
@@ -46,6 +52,7 @@ autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
+{%- endif %}
 
 [program:openbox]
 priority=1
@@ -56,7 +63,6 @@ autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
-
 {% for item in items %}{% if item.supervisord %}
 {{ supervisord(item.supervisord) }}
 {% endif %}{% endfor %}

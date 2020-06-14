@@ -12,7 +12,7 @@ http {
   server_tokens off;
 
   upstream novnc_proxy {
-      server 127.0.0.1:8080;
+      server {{NOVNC_ADDR}};
   }
   {% set HTTP_PORT = env.HTTP_PORT  | default(80) %}{% set HTTPS_PORT = env.HTTPS_PORT  | default(443) %}
   server {

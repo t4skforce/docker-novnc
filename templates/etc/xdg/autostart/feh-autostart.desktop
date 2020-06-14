@@ -3,5 +3,5 @@ Version=1.0
 Name=Feh
 Type=Application
 Comment=Update Wallpaper
-Exec=(sleep 1 && feh --bg-fill /etc/wallpaper.jpg)
+Exec=feh --bg-fill /etc/wallpaper.jpg
 NoDisplay=yes
