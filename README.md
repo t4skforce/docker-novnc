@@ -13,11 +13,13 @@ Optional Basic Auth
 - APP_PASSWORD=
 
 Optional Server Ports
-- HTTP_PORT=80 default
-- HTTPS_PORT=443 default
+- HTTP_PORT=8080 default
+- HTTPS_PORT=8443 default
 
 Optional Server Name
 - SERVER_NAME=Hostname used for SSL certificate
+- REVERSE_PROXY=yes/no default yes (disable nginx)
+- CRONJOBS=yes/no default yes (disable conjobs)
 
 exposes HTTP_PORT -> redirect -> HTTPS_PORT
 
