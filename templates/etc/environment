@@ -1,0 +1,11 @@
+# default env file
+NO_AT_BRIDGE=1
+XDG_CONFIG_DIRS=/etc/xdg
+DESKTOP_SESSION=openbox
+XDG_SESSION_DESKTOP=openbox
+XDG_SESSION_TYPE=x11
+XDG_SESSION_CLASS=user
+SHELL=/bin/bash
+EDITOR=/usr/bin/nano
+TERM=xterm-256color
+DISPLAY=:0.0

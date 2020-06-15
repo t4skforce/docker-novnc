@@ -35,6 +35,8 @@ COPY --from=easy-novnc-build /bin/easy-novnc /usr/local/bin/
 COPY ./templates/. /
 RUN set -xe && \
     chmod 0644 /etc/cron.d/*.j2 /etc/nginx/*.j2 /etc/xdg/openbox/*.j2 /etc/*.j2 && \
+    chmod 0700 /etc/entrypoint.d && \
+    chmod 0444 /usr/share/applications/* /etc/xdg/autostart/* && \
     groupadd --gid ${PUID} app && \
     useradd --home-dir ${HOME} --shell /bin/bash --uid ${PUID} --gid ${PUID} app && \
     mkdir -p ${HOME}

@@ -1,0 +1,7 @@
+{%- for entry in items %}# {{entry.name}} - {{entry.comment}}
+  {%- if entry.terminal %}
+(terminator -x '{{entry.exec}}' > /dev/null 2>&1) &
+  {%- else %}
+({{entry.exec}} > /dev/null 2>&1) &
+  {%- endif %}
+{% endfor -%}

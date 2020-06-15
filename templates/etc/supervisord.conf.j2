@@ -7,7 +7,6 @@ pidfile=/tmp/supervisord.pid
 logfile=/dev/fd/1
 logfile_maxbytes=0
 directory=%(ENV_HOME)s
-environment=HOME=%(ENV_HOME)s,DISPLAY=:0
 
 [program:x11]
 priority=0

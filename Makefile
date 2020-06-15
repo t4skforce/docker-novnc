@@ -14,7 +14,7 @@ build:
 
 debug:
 	@echo "debugging things"
-	docker run --name docker-novnc -it -p 127.0.0.1:8080:8080/tcp -p 127.0.0.1:8443:8443/tcp -e REVERSE_PROXY=yes -e CRONJOBS=no -e APP_USERNAME=admin -e APP_PASSWORD=admin -v ~/data:/data:rw --rm t4skforce/docker-novnc:latest /bin/bash
+	docker run --name docker-novnc -it -p 127.0.0.1:8080:8080/tcp -p 127.0.0.1:8443:8443/tcp -e REVERSE_PROXY=no -e CRONJOBS=yes -e APP_USERNAME=admin -e APP_PASSWORD=admin -v ~/data:/data:rw --rm t4skforce/docker-novnc:latest /bin/bash
 
 run:
 	@echo "runing things"

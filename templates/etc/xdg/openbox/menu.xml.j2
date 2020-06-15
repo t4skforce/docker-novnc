@@ -5,7 +5,7 @@
     <menu id="{{ category.lower() }}-menu" label="{{ category }}">{% for entry in category_items.get(category) %}
       <item label="{{ entry.name }}">
           <action name="Execute">
-              <execute>{% if entry.terminal %}terminator -x {% endif %}{{ entry.exec }}</execute>{% if entry.startupnotify %}
+              <execute>{% if entry.terminal %}terminator -x '{{ entry.exec }}'{% else %}{{ entry.exec }}{% endif %}</execute>{% if entry.startupnotify %}
               <startupnotify>
                 <enabled>yes</enabled>{% if entry.startupwmclass %}
                 <wmclass>{{entry.startupwmclass}}</wmclass>{% endif %}{% if entry.icon %}
