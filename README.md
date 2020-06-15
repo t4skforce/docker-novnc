@@ -32,5 +32,5 @@ config of startup / cronjob and menur entries via <name>.desktop files
 
 ## start
 ```
-docker run --name docker-novnc -it -p 8181:8181 -p 4443:4443 -v ~/config:/data:rw -v ~/Downloads:/data/Downloads:rw -e HTTP_PORT=8181 -e HTTPS_PORT=4443 --rm t4skforce/docker-novnc:latest
+docker run --name docker-novnc -it -p 8181:8181 -p 4443:4443 -v ~/config:/data:rw -e HTTP_PORT=8181 -e HTTPS_PORT=4443 --rm t4skforce/docker-novnc:latest
 ```
