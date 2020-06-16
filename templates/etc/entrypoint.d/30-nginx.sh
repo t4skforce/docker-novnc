@@ -7,11 +7,13 @@ if getboolean "$REVERSE_PROXY"; then
     openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
       -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=${SERVER_NAME}" \
       -keyout "$HOME/.cert/server.key" -out "$HOME/.cert/server.crt"
+    chown app:app "$HOME/.cert/server.key" "$HOME/.cert/server.crt"
   fi
   # add basic auth ir requests
   if [ ! -z "$APP_USERNAME" ]; then
     if [ ! -f "$HOME/.htpasswd" ]; then
       touch "$HOME/.htpasswd"
+      chown app:app "$HOME/.htpasswd"
     fi
     htpasswd -db "$HOME/.htpasswd" $APP_USERNAME $APP_PASSWORD
   fi
