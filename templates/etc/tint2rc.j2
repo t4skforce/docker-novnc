@@ -148,7 +148,7 @@ launcher_icon_asb = 100 0 0
 launcher_icon_theme = {{ env.OPENBOX_ICON_THEME_NAME | default('Papirus-Dark') }}
 startup_notifications = 1
 launcher_tooltip = 1{% for item in items %}{% if item.icon and item.openbox and item.openbox.show_launcher %}
-launcher_item_app = {{ item.desktop }}{% endif %}{% endfor %}
+launcher_item_app = /usr/share/applications/{{ item.desktop }}{% endif %}{% endfor %}
 
 #-------------------------------------
 # Clock

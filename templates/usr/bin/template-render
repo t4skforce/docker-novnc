@@ -185,20 +185,11 @@ def supervisord(conf):
 def getboolean(input):
     return str(input).lower() in ['true', '1', 't', 'y', 'yes']
 
-def lowest_port():
-    http_port = int(os.environ.get('HTTP_PORT','8080'))
-    https_port = int(os.environ.get('HTTPS_PORT','8443'))
-    if http_port < https_port: return http_port
-    else: return https_port
-
 def novnc_addr():
     if getboolean(os.environ.get('REVERSE_PROXY','yes')):
-        return '127.0.0.1:'+str(int(lowest_port()-1))
+        return '127.0.0.1:5901'
     else:
         return '0.0.0.0:'+str(os.environ.get('HTTP_PORT','8080'))
-
-def xtigervnc_port():
-    return str(lowest_port()-2)
 
 # setup env
 def get_env():
@@ -208,7 +199,6 @@ def get_env():
     env.globals['supervisord']=supervisord
     env.globals['getboolean']=getboolean
     env.globals['NOVNC_ADDR']=novnc_addr()
-    env.globals['XTIGERVNC_PORT']=xtigervnc_port()
     return env
 
 @click.group()

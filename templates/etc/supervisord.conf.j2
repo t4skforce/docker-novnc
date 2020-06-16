@@ -12,7 +12,7 @@ directory=%(ENV_HOME)s
 priority=0
 user=app
 group=app
-command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -geometry 1920x1080 -localhost -rfbport {{XTIGERVNC_PORT}} -nolisten unix -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
+command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -geometry 1920x1080 -localhost -rfbport 5900 -nolisten unix -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
@@ -22,7 +22,7 @@ redirect_stderr=true
 priority=0
 user=app
 group=app
-command=/usr/local/bin/easy-novnc --addr {{NOVNC_ADDR}} --host localhost --port {{XTIGERVNC_PORT}} --no-url-password --novnc-params "resize=remote"
+command=/usr/local/bin/easy-novnc --addr {{NOVNC_ADDR}} --host localhost --port 5900 --no-url-password --novnc-params "resize=remote"
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0

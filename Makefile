@@ -14,8 +14,10 @@ build:
 
 debug:
 	@echo "debugging things"
+	docker rm docker-novnc && echo "removed container" || /bin/true
 	docker run --name docker-novnc -it -p 127.0.0.1:8080:8080/tcp -p 127.0.0.1:8443:8443/tcp -e REVERSE_PROXY=no -e CRONJOBS=yes -e APP_USERNAME=admin -e APP_PASSWORD=admin -v ~/data:/data:rw --rm t4skforce/docker-novnc:latest /bin/bash
 
 run:
 	@echo "runing things"
-	docker run --name docker-novnc -it -p 127.0.0.1:8080:8080/tcp -p 127.0.0.1:8443:8443/tcp -e ENV_TESTING_VAR=1 -e REVERSE_PROXY=no -e CRONJOBS=yes -e APP_USERNAME=admin -e APP_PASSWORD=admin -v ~/data:/data:rw --rm t4skforce/docker-novnc:latest
+	docker rm docker-novnc && echo "removed container" || /bin/true
+	docker run --name docker-novnc -it -p 127.0.0.1:8080:8080/tcp -p 127.0.0.1:8443:8443/tcp -e ENV_TESTING_VAR=1 -e REVERSE_PROXY=no -e CRONJOBS=yes -e APP_USERNAME=admin -e APP_PASSWORD=admin -v --rm t4skforce/docker-novnc:latest
