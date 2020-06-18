@@ -16,6 +16,7 @@ ENV HOME=/data \
     CRONJOBS=yes
 
 RUN set -xe && \
+    sed -i "s# main# main contrib non-free#g" /etc/apt/sources.list && \
     apt-get update -y && \
     mkdir -p /usr/share/desktop-directories /usr/share/man/man1 && \
     apt-get install -y --no-install-recommends \
