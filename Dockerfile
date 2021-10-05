@@ -26,13 +26,14 @@ RUN set -xe && \
       tigervnc-standalone-server supervisor cron python3-jinja2 python3-click \
       terminator nano wget curl ca-certificates xdg-utils htop tar fonts-dejavu \
       nginx-light gettext-base apache2-utils && \
-    rm -rf /usr/share/themes/{Arc,Arc-Dark,Arc-Darker}/{cinnamon,gnome-shell,unity,xfwm4} && \
-    rm -rf /usr/share/icons/{Adwaita,HighContrast,Papirus,Papirus-Light,ePapirus,hicolor} && \
-    rm -rf /etc/systemd/**/*.service && \
-    rm -rf /usr/lib/python*/**/*.pyc && \
-    rm -rf /etc/nginx/nginx.conf && \
-    rm -rf /etc/xdg/autostart/* /etc/xdg/openbox/* && \
-    rm -rf /var/lib/apt/lists
+    rm -rf /usr/share/themes/{Arc,Arc-Dark,Arc-Darker}/{cinnamon,gnome-shell,unity,xfwm4} \
+       /usr/share/icons/{Adwaita,HighContrast,Papirus,Papirus-Light,ePapirus,hicolor} \
+       /etc/systemd/**/*.service \
+       /usr/lib/python*/**/*.pyc \
+       /etc/nginx/nginx.conf \
+       /etc/xdg/autostart/* \
+       /etc/xdg/openbox/* \
+       /var/lib/apt/lists
 
 COPY --from=easy-novnc-build /bin/easy-novnc /usr/local/bin/
 COPY ./templates/. /
