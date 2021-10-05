@@ -5,7 +5,7 @@ RUN set -xe && \
     go get github.com/geek1011/easy-novnc@v1.1.0 && \
     go build -o /bin/easy-novnc github.com/geek1011/easy-novnc
 
-FROM debian:buster-slim
+FROM debian:stable-slim
 
 ENV HOME=/data \
     PUID=1000 \
