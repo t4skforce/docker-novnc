@@ -1,11 +1,13 @@
-FROM golang:1.14-buster AS easy-novnc-build
+FROM golang:latest AS easy-novnc-build
 WORKDIR /src
 RUN set -xe && \
     go mod init build && \
-    go get github.com/geek1011/easy-novnc@v1.1.0 && \
+    go get github.com/geek1011/easy-novnc && \
     go build -o /bin/easy-novnc github.com/geek1011/easy-novnc
 
 FROM debian:stable-slim
+
+ARG BUILD_DATE=""
 
 ENV HOME=/data \
     PUID=1000 \
