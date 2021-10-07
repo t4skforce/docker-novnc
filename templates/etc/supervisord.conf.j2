@@ -1,5 +1,12 @@
+{% set APP_TITLE = env.APP_TITLE | default('noVNC') -%}
 {% set REVERSE_PROXY = env.REVERSE_PROXY | default('yes') -%}
 {% set CRONJOBS = env.CRONJOBS | default('yes') -%}
+{% set VNC_EXPOSE = env.VNC_EXPOSE | default('no') -%}
+{% set VNC_PORT = env.VNC_PORT | default('5900') -%}
+{% set VNC_OPTS = env.VNC_OPTS | default('-geometry 1920x1080 -depth 32 -FrameRate 30 -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0') -%}
+{% set EASY_NOVNC = env.EASY_NOVNC | default('yes') -%}
+{% set EASY_NOVNC_OPTS = env.EASYVNC_OPTS | default('') -%}
+{% set NOVNC_PARAMS = env.NOVNC_PARAMS | default('resize=remote') -%}
 [supervisord]
 user=root
 nodaemon=true
@@ -12,22 +19,24 @@ directory=%(ENV_HOME)s
 priority=0
 user=app
 group=app
-command=/usr/bin/Xtigervnc -desktop "{{env.APP_TITLE | default('noVNC')}}" -geometry 1920x1080 -localhost -rfbport 5900 -nolisten unix -SecurityTypes None -AlwaysShared -AcceptKeyEvents -AcceptPointerEvents -AcceptSetDesktopSize -SendCutText -AcceptCutText -UseIPv6=0 :0
+command=/usr/bin/Xtigervnc -desktop "{{APP_TITLE}}" -rfbport {{VNC_PORT}} {% if getboolean(VNC_EXPOSE) -%}-localhost{%- endif %} {{VNC_OPTS}} :0
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
 
+{% if getboolean(EASY_NOVNC) -%}
 [program:easy-novnc]
 priority=0
 user=app
 group=app
-command=/usr/local/bin/easy-novnc --addr {{NOVNC_ADDR}} --host localhost --port 5900 --no-url-password --basic-ui --novnc-params "resize=remote"
+command=/usr/local/bin/easy-novnc --addr {{NOVNC_ADDR}} --host localhost --port {{VNC_PORT}} --no-url-password --basic-ui --novnc-params "{{NOVNC_PARAMS}}" {{EASYVNC_OPTS}}
 autorestart=true
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true
 
+{%- endif %}
 {% if getboolean(REVERSE_PROXY) -%}
 [program:nginx]
 priority=0

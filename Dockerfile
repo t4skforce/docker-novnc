@@ -15,7 +15,11 @@ ENV HOME=/data \
     HTTP_PORT=8080 \
     HTTPS_PORT=8443 \
     REVERSE_PROXY=yes \
-    CRONJOBS=yes
+    CRONJOBS=yes \
+    VNC_EXPOSE=no \
+    OPENBOX_THEME_NAME=Nightmare \
+    OPENBOX_ICON_THEME_NAME=Papirus-Dark \
+    OPENBOX_THEME_FONT="DejaVu Sans 9"
 
 RUN set -xe && \
     sed -i "s# main# main contrib non-free#g" /etc/apt/sources.list && \
@@ -26,7 +30,7 @@ RUN set -xe && \
       tigervnc-standalone-server supervisor cron python3-jinja2 python3-click \
       terminator nano wget curl ca-certificates xdg-utils htop tar fonts-dejavu \
       nginx-light gettext-base apache2-utils && \
-    rm -rf /usr/share/themes/{Arc,Arc-Dark,Arc-Darker}/{cinnamon,gnome-shell,unity,xfwm4} \
+    rm -rf /usr/share/themes/*/{cinnamon,gnome-shell,unity,xfwm4,plank} \
        /usr/share/icons/{Adwaita,HighContrast,Papirus,Papirus-Light,ePapirus,hicolor} \
        /etc/systemd/**/*.service \
        /usr/lib/python*/**/*.pyc \
