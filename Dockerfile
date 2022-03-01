@@ -46,7 +46,7 @@ RUN set -xe && \
     chmod 0700 /etc/entrypoint.d && \
     chmod 0444 /usr/share/applications/* /etc/xdg/autostart/* && \
     groupadd --gid ${PUID} app && \
-    useradd --home-dir ${HOME} --shell /bin/bash --uid ${PUID} --gid ${PUID} app && \
+    useradd --home-dir ${HOME} --shell /bin/bash --uid ${PUID} --gid ${PGID} app && \
     mkdir -p ${HOME}
 
 WORKDIR ${HOME}
