@@ -22,7 +22,7 @@ ENV HOME=/data \
     OPENBOX_THEME_FONT="DejaVu Sans 9"
 
 RUN set -xe && \
-    sed -i "s# main# main contrib non-free#g" /etc/apt/sources.list && \
+    sed -i 's/^Components: main$/& contrib non-free/' /etc/apt/sources.list.d/debian.sources && \
     apt-get update -y && \
     mkdir -p /usr/share/desktop-directories /usr/share/man/man1 && \
     apt-get install -y --no-install-recommends \
