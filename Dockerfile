@@ -7,7 +7,7 @@ RUN set -xe && \
 
 FROM debian:stable-slim
 
-ARG BUILD_DATE="2024-10-21T15:04:05Z"
+ARG BUILD_DATE="2024-10-28T16:04:06Z"
 
 ENV HOME=/data \
     PUID=1000 \
