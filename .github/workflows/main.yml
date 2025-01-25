@@ -1,5 +1,5 @@
-name: "Build, Release and Push"
-
+name: Image Builds
+on:
   push:
     tags:
       - '[0-9]+.[0-9]+.0'
@@ -8,7 +8,6 @@ name: "Build, Release and Push"
       - 'master'
     branches:
       - 'official'
-
 jobs:
   docker:
     runs-on: ubuntu-latest
